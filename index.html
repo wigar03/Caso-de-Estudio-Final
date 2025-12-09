@@ -80,9 +80,15 @@
                 <li><a href="#editor" class="nav-link">Editor</a></li>
                 <li><a href="#archivos" class="nav-link">Archivos</a></li>
                 <li><a href="#chat" class="nav-link">Chat</a></li>
+                <li><a href="#reuniones" class="nav-link">Reuniones</a></li>
+                <li><a href="#votaciones" class="nav-link">Votaciones</a></li>
                 <li><a href="#timeline" class="nav-link">Timeline</a></li>
                 <li><a href="#calendario" class="nav-link">Calendario</a></li>
+                <li><a href="#analisis" class="nav-link">Análisis</a></li>
                 <li><a href="#reportes" class="nav-link">Reportes</a></li>
+                <li><a href="#plantillas" class="nav-link">Plantillas</a></li>
+                <li><a href="#auditoria" class="nav-link">Auditoría</a></li>
+                <li><a href="#configuracion" class="nav-link">Configuración</a></li>
                 <li><a href="#seguridad" class="nav-link">Seguridad</a></li>
             </ul>
         </div>
@@ -370,7 +376,59 @@
             </div>
         </section>
 
-        <!-- Reportes -->
+        <!-- Análisis Predictivo -->
+        <section id="analisis" class="section">
+            <div class="container">
+                <h2>Análisis Predictivo e IA</h2>
+                <div class="analytics-container">
+                    <div class="analytics-card">
+                        <h3>🔮 Predicciones</h3>
+                        <div class="prediction-item">
+                            <span class="prediction-label">Fecha estimada de finalización:</span>
+                            <span class="prediction-value" id="predictedCompletion">Calculando...</span>
+                        </div>
+                        <div class="prediction-item">
+                            <span class="prediction-label">Riesgo de retraso:</span>
+                            <span class="prediction-value" id="riskLevel">Bajo</span>
+                        </div>
+                        <div class="prediction-item">
+                            <span class="prediction-label">Productividad del equipo:</span>
+                            <span class="prediction-value" id="productivityScore">85%</span>
+                        </div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>📊 Métricas Avanzadas</h3>
+                        <div class="metric-item">
+                            <span>Velocidad de completación:</span>
+                            <span id="completionVelocity">2.5 tareas/día</span>
+                        </div>
+                        <div class="metric-item">
+                            <span>Tiempo promedio por tarea:</span>
+                            <span id="avgTaskTime">3.2 días</span>
+                        </div>
+                        <div class="metric-item">
+                            <span>Eficiencia del equipo:</span>
+                            <span id="teamEfficiency">92%</span>
+                        </div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>🤖 Recomendaciones IA</h3>
+                        <div id="aiRecommendations" class="recommendations-list">
+                            <div class="recommendation-item">
+                                <span class="rec-icon">💡</span>
+                                <span>Considera redistribuir tareas para optimizar la carga de trabajo</span>
+                            </div>
+                            <div class="recommendation-item">
+                                <span class="rec-icon">⚠️</span>
+                                <span>Hay 3 tareas con fecha de vencimiento próxima que requieren atención</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reportes Mejorados -->
         <section id="reportes" class="section">
             <div class="container">
                 <h2>Reportes y Métricas</h2>
@@ -381,11 +439,17 @@
                             <option value="tareas">Reporte de Tareas</option>
                             <option value="equipo">Reporte de Equipo</option>
                             <option value="productividad">Productividad</option>
+                            <option value="detallado">Reporte Detallado</option>
                         </select>
                         <input type="date" id="reportStartDate">
                         <input type="date" id="reportEndDate">
                         <button class="btn-primary" onclick="generateReport()">Generar Reporte</button>
-                        <button class="export-btn" onclick="exportReport()">📊 Exportar PDF</button>
+                        <div class="export-options">
+                            <button class="export-btn" onclick="exportReport('pdf')">📄 PDF</button>
+                            <button class="export-btn" onclick="exportReport('excel')">📊 Excel</button>
+                            <button class="export-btn" onclick="exportReport('csv')">📋 CSV</button>
+                            <button class="export-btn" onclick="exportReport('json')">💾 JSON</button>
+                        </div>
                     </div>
                     <div class="report-content" id="reportContent">
                         <p class="no-data">Selecciona un tipo de reporte y genera para ver los resultados.</p>
@@ -530,6 +594,104 @@
                     <div class="chat-input-container">
                         <form id="chatForm">
                             <input type="text" id="chatInput" placeholder="Escribe un mensaje..." autocomplete="off">
+                            <button type="button" onclick="sendFileInChat()" title="Enviar archivo">📎</button>
+                            <button type="button" onclick="sendEmoji()" title="Emoji">😊</button>
+                            <button type="submit">Enviar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reuniones Virtuales -->
+        <section id="reuniones" class="section">
+            <div class="container">
+                <div class="meetings-header">
+                    <h2>Reuniones Virtuales</h2>
+                    <button class="btn-primary" onclick="createMeeting()">➕ Nueva Reunión</button>
+                </div>
+                <div class="meetings-grid">
+                    <div class="meeting-card">
+                        <div class="meeting-icon">📹</div>
+                        <h3>Reunión de Planificación</h3>
+                        <p class="meeting-date">Hoy, 15:00 - 16:00</p>
+                        <p class="meeting-participants">6 participantes</p>
+                        <button class="join-btn" onclick="joinMeeting(1)">Unirse</button>
+                    </div>
+                    <div class="meeting-card">
+                        <div class="meeting-icon">📹</div>
+                        <h3>Revisión Semanal</h3>
+                        <p class="meeting-date">Mañana, 10:00 - 11:00</p>
+                        <p class="meeting-participants">6 participantes</p>
+                        <button class="join-btn" onclick="joinMeeting(2)">Unirse</button>
+                    </div>
+                </div>
+                <div class="meeting-room" id="meetingRoom" style="display: none;">
+                    <div class="meeting-controls">
+                        <button onclick="toggleMicrophone()" id="micBtn">🎤</button>
+                        <button onclick="toggleCamera()" id="cameraBtn">📹</button>
+                        <button onclick="toggleScreenShare()" id="screenBtn">🖥️</button>
+                        <button onclick="toggleChat()" id="chatBtn">💬</button>
+                        <button onclick="leaveMeeting()" class="leave-btn">Salir</button>
+                    </div>
+                    <div class="video-grid" id="videoGrid">
+                        <div class="video-participant">
+                            <div class="video-placeholder">Tu video aparecerá aquí</div>
+                            <div class="participant-name">Tú</div>
+                        </div>
+                    </div>
+                    <div class="meeting-chat" id="meetingChat" style="display: none;">
+                        <div class="meeting-chat-messages"></div>
+                        <input type="text" placeholder="Escribe un mensaje..." class="meeting-chat-input">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sistema de Votaciones -->
+        <section id="votaciones" class="section">
+            <div class="container">
+                <div class="votaciones-header">
+                    <h2>Sistema de Votaciones</h2>
+                    <button class="btn-primary" onclick="createVote()">➕ Nueva Votación</button>
+                </div>
+                <div class="votaciones-list" id="votacionesList">
+                    <div class="vote-card">
+                        <h3>¿Qué herramienta de diseño prefieren?</h3>
+                        <p class="vote-description">Necesitamos decidir qué herramienta usar para el diseño instruccional</p>
+                        <div class="vote-options">
+                            <div class="vote-option">
+                                <div class="vote-bar" style="width: 40%"></div>
+                                <span>Figma</span>
+                                <span class="vote-count">40% (2 votos)</span>
+                            </div>
+                            <div class="vote-option">
+                                <div class="vote-bar" style="width: 60%"></div>
+                                <span>Adobe XD</span>
+                                <span class="vote-count">60% (3 votos)</span>
+                            </div>
+                        </div>
+                        <div class="vote-footer">
+                            <span class="vote-status">En curso</span>
+                            <span class="vote-deadline">Cierra: 20/01/2024</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+            <div class="container">
+                <h2>Chat en Tiempo Real</h2>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message">
+                            <span class="message-author">Sistema</span>
+                            <span class="message-time">Ahora</span>
+                            <p class="message-text">Bienvenido al chat colaborativo. Los mensajes se guardan localmente.</p>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <form id="chatForm">
+                            <input type="text" id="chatInput" placeholder="Escribe un mensaje..." autocomplete="off">
                             <button type="submit">Enviar</button>
                         </form>
                     </div>
@@ -634,6 +796,25 @@
             <span class="close-modal">&times;</span>
             <h2>📚 Historial de Versiones</h2>
             <div id="versionsList"></div>
+        </div>
+    </div>
+
+    <!-- Modal de Votación -->
+    <div id="voteModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Nueva Votación</h2>
+            <form id="voteForm">
+                <input type="text" id="voteTitle" placeholder="Título de la votación" required>
+                <textarea id="voteDescription" placeholder="Descripción" rows="3"></textarea>
+                <div id="voteOptions">
+                    <input type="text" class="vote-option-input" placeholder="Opción 1" required>
+                    <input type="text" class="vote-option-input" placeholder="Opción 2" required>
+                </div>
+                <button type="button" onclick="addVoteOption()">+ Agregar Opción</button>
+                <input type="date" id="voteDeadline" required>
+                <button type="submit" class="btn-primary">Crear Votación</button>
+            </form>
         </div>
     </div>
 

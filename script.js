@@ -12,6 +12,11 @@ let documentVersions = [];
 let badges = [];
 let documentContent = '';
 let autoSaveTimer = null;
+let votes = [];
+let meetings = [];
+let auditLogs = [];
+let backups = [];
+let templates = [];
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', function() {
@@ -40,6 +45,11 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeTimeline();
     initializeGlobalSearch();
     initializeBadges();
+    initializeVotes();
+    initializeMeetings();
+    initializeAnalytics();
+    initializeAudit();
+    initializeTemplates();
     loadData();
 });
 
@@ -1690,19 +1700,62 @@ function generateProductivityReport() {
     `;
 }
 
-function exportReport() {
+function exportReport(format = 'pdf') {
     const reportContent = document.getElementById('reportContent');
     if (!reportContent) return;
     
     const content = reportContent.innerText || reportContent.textContent;
-    const blob = new Blob([content], { type: 'text/plain' });
+    let blob, filename, mimeType;
+    
+    switch(format) {
+        case 'pdf':
+            // Simulación de PDF - en producción usaría una librería como jsPDF
+            blob = new Blob([content], { type: 'text/plain' });
+            filename = `reporte-${new Date().toISOString().split('T')[0]}.txt`;
+            break;
+        case 'excel':
+            // Simulación de Excel - formato CSV compatible
+            const csvContent = convertToCSV(content);
+            blob = new Blob([csvContent], { type: 'text/csv' });
+            filename = `reporte-${new Date().toISOString().split('T')[0]}.csv`;
+            break;
+        case 'csv':
+            const csv = convertToCSV(content);
+            blob = new Blob([csv], { type: 'text/csv' });
+            filename = `reporte-${new Date().toISOString().split('T')[0]}.csv`;
+            break;
+        case 'json':
+            const jsonData = {
+                reporte: content,
+                fecha: new Date().toISOString(),
+                datos: {
+                    tareas: tasks,
+                    archivos: uploadedFiles.length,
+                    mensajes: chatMessages.length
+                }
+            };
+            blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
+            filename = `reporte-${new Date().toISOString().split('T')[0]}.json`;
+            break;
+        default:
+            blob = new Blob([content], { type: 'text/plain' });
+            filename = `reporte-${new Date().toISOString().split('T')[0]}.txt`;
+    }
+    
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `reporte-${new Date().toISOString().split('T')[0]}.txt`;
+    a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
-    addNotification('Reporte Exportado', 'El reporte se ha descargado correctamente', 'success');
+    addNotification('Reporte Exportado', `El reporte se ha descargado en formato ${format.toUpperCase()}`, 'success');
+    addAuditLog('Reporte exportado', `Formato: ${format}`, 'reportes');
+}
+
+function convertToCSV(text) {
+    // Conversión simple a CSV
+    const lines = text.split('\n').filter(line => line.trim());
+    return lines.join('\n');
 }
 
 function exportDashboard() {
@@ -1777,4 +1830,759 @@ function loadData() {
             `).join('');
         }
     }, 30000);
+}
+
+// Sistema de Reuniones Virtuales
+function initializeMeetings() {
+    loadMeetings();
+    renderMeetings();
+}
+
+function loadMeetings() {
+    const saved = localStorage.getItem('meetings');
+    if (saved) {
+        meetings = JSON.parse(saved);
+    } else {
+        meetings = [
+            {
+                id: 1,
+                title: 'Reunión de Planificación',
+                date: new Date().toISOString(),
+                duration: 60,
+                participants: 6,
+                status: 'scheduled'
+            },
+            {
+                id: 2,
+                title: 'Revisión Semanal',
+                date: new Date(Date.now() + 24*60*60*1000).toISOString(),
+                duration: 60,
+                participants: 6,
+                status: 'scheduled'
+            }
+        ];
+        saveMeetings();
+    }
+}
+
+function saveMeetings() {
+    localStorage.setItem('meetings', JSON.stringify(meetings));
+}
+
+function renderMeetings() {
+    const grid = document.querySelector('.meetings-grid');
+    if (!grid) return;
+    
+    grid.innerHTML = meetings.map(meeting => {
+        const date = new Date(meeting.date);
+        return `
+            <div class="meeting-card">
+                <div class="meeting-icon">📹</div>
+                <h3>${meeting.title}</h3>
+                <p class="meeting-date">${date.toLocaleDateString('es-ES')}, ${date.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'})}</p>
+                <p class="meeting-participants">${meeting.participants} participantes</p>
+                <button class="join-btn" onclick="joinMeeting(${meeting.id})">Unirse</button>
+            </div>
+        `;
+    }).join('');
+}
+
+window.createMeeting = function() {
+    const title = prompt('Título de la reunión:');
+    if (!title) return;
+    
+    const meeting = {
+        id: Date.now(),
+        title,
+        date: new Date().toISOString(),
+        duration: 60,
+        participants: 1,
+        status: 'scheduled',
+        createdBy: currentUser
+    };
+    
+    meetings.push(meeting);
+    saveMeetings();
+    renderMeetings();
+    addNotification('Reunión Creada', `Reunión "${title}" creada exitosamente`, 'success');
+    addAuditLog('Reunión creada', title, 'meetings');
+};
+
+window.joinMeeting = function(meetingId) {
+    const meetingRoom = document.getElementById('meetingRoom');
+    const videoGrid = document.getElementById('videoGrid');
+    
+    if (meetingRoom && videoGrid) {
+        meetingRoom.style.display = 'block';
+        videoGrid.innerHTML = `
+            <div class="video-participant">
+                <div class="video-placeholder">Tu video aparecerá aquí</div>
+                <div class="participant-name">${currentUser || 'Tú'}</div>
+            </div>
+        `;
+        
+        // Simular otros participantes
+        const roles = ['Coordinador', 'Diseñador Instruccional', 'Editor de Contenido', 'Programador Web', 'Especialista Multimedia', 'Revisor'];
+        roles.forEach(role => {
+            if (role !== currentRole) {
+                const participant = document.createElement('div');
+                participant.className = 'video-participant';
+                participant.innerHTML = `
+                    <div class="video-placeholder">${role}</div>
+                    <div class="participant-name">${role}</div>
+                `;
+                videoGrid.appendChild(participant);
+            }
+        });
+        
+        addNotification('Reunión Iniciada', 'Te has unido a la reunión', 'success');
+        addAuditLog('Unido a reunión', `Reunión ID: ${meetingId}`, 'meetings');
+    }
+};
+
+window.leaveMeeting = function() {
+    const meetingRoom = document.getElementById('meetingRoom');
+    if (meetingRoom) {
+        meetingRoom.style.display = 'none';
+        addNotification('Reunión Finalizada', 'Has salido de la reunión', 'info');
+    }
+};
+
+window.toggleMicrophone = function() {
+    const btn = document.getElementById('micBtn');
+    btn.textContent = btn.textContent === '🎤' ? '🎤🔇' : '🎤';
+};
+
+window.toggleCamera = function() {
+    const btn = document.getElementById('cameraBtn');
+    btn.textContent = btn.textContent === '📹' ? '📹📷' : '📹';
+};
+
+window.toggleScreenShare = function() {
+    const btn = document.getElementById('screenBtn');
+    btn.textContent = btn.textContent === '🖥️' ? '🖥️✓' : '🖥️';
+};
+
+window.toggleChat = function() {
+    const chat = document.getElementById('meetingChat');
+    if (chat) {
+        chat.style.display = chat.style.display === 'none' ? 'block' : 'none';
+    }
+};
+
+// Sistema de Votaciones
+function initializeVotes() {
+    loadVotes();
+    renderVotes();
+    
+    const voteForm = document.getElementById('voteForm');
+    if (voteForm) {
+        voteForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            createVoteFromForm();
+        });
+    }
+}
+
+function loadVotes() {
+    const saved = localStorage.getItem('votes');
+    if (saved) {
+        votes = JSON.parse(saved);
+    } else {
+        votes = [
+            {
+                id: 1,
+                title: '¿Qué herramienta de diseño prefieren?',
+                description: 'Necesitamos decidir qué herramienta usar para el diseño instruccional',
+                options: [
+                    { text: 'Figma', votes: 2 },
+                    { text: 'Adobe XD', votes: 3 }
+                ],
+                deadline: '2024-01-20',
+                status: 'active',
+                createdBy: 'Coordinador'
+            }
+        ];
+        saveVotes();
+    }
+}
+
+function saveVotes() {
+    localStorage.setItem('votes', JSON.stringify(votes));
+}
+
+function renderVotes() {
+    const list = document.getElementById('votacionesList');
+    if (!list) return;
+    
+    if (votes.length === 0) {
+        list.innerHTML = '<p class="no-data">No hay votaciones activas</p>';
+        return;
+    }
+    
+    list.innerHTML = votes.map(vote => {
+        const totalVotes = vote.options.reduce((sum, opt) => sum + opt.votes, 0);
+        const deadline = new Date(vote.deadline);
+        const isActive = vote.status === 'active' && deadline > new Date();
+        
+        return `
+            <div class="vote-card">
+                <h3>${vote.title}</h3>
+                <p class="vote-description">${vote.description}</p>
+                <div class="vote-options">
+                    ${vote.options.map(option => {
+                        const percentage = totalVotes > 0 ? Math.round((option.votes / totalVotes) * 100) : 0;
+                        return `
+                            <div class="vote-option" onclick="voteOption(${vote.id}, '${option.text}')">
+                                <div class="vote-bar" style="width: ${percentage}%"></div>
+                                <span>${option.text}</span>
+                                <span class="vote-count">${percentage}% (${option.votes} votos)</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                <div class="vote-footer">
+                    <span class="vote-status ${isActive ? '' : 'closed'}">${isActive ? 'En curso' : 'Cerrada'}</span>
+                    <span class="vote-deadline">Cierra: ${deadline.toLocaleDateString('es-ES')}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+window.createVote = function() {
+    document.getElementById('voteModal').classList.add('show');
+};
+
+window.addVoteOption = function() {
+    const container = document.getElementById('voteOptions');
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'vote-option-input';
+    input.placeholder = `Opción ${container.children.length + 1}`;
+    input.required = true;
+    container.appendChild(input);
+};
+
+function createVoteFromForm() {
+    const title = document.getElementById('voteTitle').value;
+    const description = document.getElementById('voteDescription').value;
+    const deadline = document.getElementById('voteDeadline').value;
+    const options = Array.from(document.querySelectorAll('.vote-option-input'))
+        .map(input => ({ text: input.value, votes: 0 }))
+        .filter(opt => opt.text.trim());
+    
+    if (!title || options.length < 2) {
+        alert('Completa todos los campos y agrega al menos 2 opciones');
+        return;
+    }
+    
+    const vote = {
+        id: Date.now(),
+        title,
+        description,
+        options,
+        deadline,
+        status: 'active',
+        createdBy: currentUser
+    };
+    
+    votes.push(vote);
+    saveVotes();
+    renderVotes();
+    document.getElementById('voteModal').classList.remove('show');
+    document.getElementById('voteForm').reset();
+    addNotification('Votación Creada', `Votación "${title}" creada exitosamente`, 'success');
+    addAuditLog('Votación creada', title, 'votes');
+}
+
+window.voteOption = function(voteId, optionText) {
+    const vote = votes.find(v => v.id === voteId);
+    if (!vote) return;
+    
+    const option = vote.options.find(o => o.text === optionText);
+    if (option) {
+        option.votes++;
+        saveVotes();
+        renderVotes();
+        addNotification('Voto Registrado', `Has votado por "${optionText}"`, 'success');
+        addAuditLog('Voto registrado', `${vote.title} - ${optionText}`, 'votes');
+    }
+};
+
+// Análisis Predictivo
+function initializeAnalytics() {
+    updateAnalytics();
+    setInterval(updateAnalytics, 60000); // Actualizar cada minuto
+}
+
+function updateAnalytics() {
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter(t => t.completed).length;
+    const pendingTasks = totalTasks - completedTasks;
+    
+    // Predicción de fecha de finalización
+    const avgDaysPerTask = calculateAverageDaysPerTask();
+    const estimatedDays = pendingTasks * avgDaysPerTask;
+    const predictedDate = new Date();
+    predictedDate.setDate(predictedDate.getDate() + estimatedDays);
+    
+    const predictedEl = document.getElementById('predictedCompletion');
+    if (predictedEl) {
+        predictedEl.textContent = predictedDate.toLocaleDateString('es-ES');
+    }
+    
+    // Nivel de riesgo
+    const overdueTasks = tasks.filter(t => {
+        if (!t.dueDate || t.completed) return false;
+        return new Date(t.dueDate) < new Date();
+    }).length;
+    
+    const riskEl = document.getElementById('riskLevel');
+    if (riskEl) {
+        const risk = overdueTasks > 2 ? 'Alto' : overdueTasks > 0 ? 'Medio' : 'Bajo';
+        riskEl.textContent = risk;
+        riskEl.style.color = risk === 'Alto' ? 'var(--accent-color)' : risk === 'Medio' ? 'var(--warning-color)' : 'var(--success-color)';
+    }
+    
+    // Productividad
+    const productivityEl = document.getElementById('productivityScore');
+    if (productivityEl) {
+        const productivity = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+        productivityEl.textContent = productivity + '%';
+    }
+    
+    // Métricas avanzadas
+    const velocityEl = document.getElementById('completionVelocity');
+    if (velocityEl) {
+        velocityEl.textContent = avgDaysPerTask > 0 ? (1 / avgDaysPerTask).toFixed(1) + ' tareas/día' : '0 tareas/día';
+    }
+    
+    const avgTimeEl = document.getElementById('avgTaskTime');
+    if (avgTimeEl) {
+        avgTimeEl.textContent = avgDaysPerTask.toFixed(1) + ' días';
+    }
+    
+    const efficiencyEl = document.getElementById('teamEfficiency');
+    if (efficiencyEl) {
+        const efficiency = calculateTeamEfficiency();
+        efficiencyEl.textContent = efficiency + '%';
+    }
+    
+    // Recomendaciones IA
+    updateAIRecommendations();
+}
+
+function calculateAverageDaysPerTask() {
+    const completed = tasks.filter(t => t.completed && t.createdAt && t.completedAt);
+    if (completed.length === 0) return 3; // Default
+    
+    const totalDays = completed.reduce((sum, task) => {
+        const start = new Date(task.createdAt);
+        const end = new Date(task.completedAt);
+        return sum + Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    }, 0);
+    
+    return totalDays / completed.length || 3;
+}
+
+function calculateTeamEfficiency() {
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter(t => t.completed).length;
+    const onTimeTasks = tasks.filter(t => {
+        if (!t.completed || !t.dueDate) return false;
+        const completed = new Date(t.completedAt);
+        const due = new Date(t.dueDate);
+        return completed <= due;
+    }).length;
+    
+    if (totalTasks === 0) return 100;
+    return Math.round((onTimeTasks / totalTasks) * 100);
+}
+
+function updateAIRecommendations() {
+    const container = document.getElementById('aiRecommendations');
+    if (!container) return;
+    
+    const recommendations = [];
+    
+    // Verificar carga de trabajo
+    const memberTasks = {};
+    tasks.forEach(t => {
+        if (!t.completed) {
+            memberTasks[t.assignee] = (memberTasks[t.assignee] || 0) + 1;
+        }
+    });
+    
+    const maxTasks = Math.max(...Object.values(memberTasks), 0);
+    const minTasks = Math.min(...Object.values(memberTasks), 0);
+    
+    if (maxTasks - minTasks > 3) {
+        recommendations.push({
+            icon: '💡',
+            text: 'Considera redistribuir tareas para optimizar la carga de trabajo'
+        });
+    }
+    
+    // Tareas próximas a vencer
+    const upcomingDeadlines = tasks.filter(t => {
+        if (t.completed || !t.dueDate) return false;
+        const daysUntilDue = Math.ceil((new Date(t.dueDate) - new Date()) / (1000 * 60 * 60 * 24));
+        return daysUntilDue <= 3 && daysUntilDue > 0;
+    }).length;
+    
+    if (upcomingDeadlines > 0) {
+        recommendations.push({
+            icon: '⚠️',
+            text: `Hay ${upcomingDeadlines} tarea(s) con fecha de vencimiento próxima que requieren atención`
+        });
+    }
+    
+    // Tareas sin asignar
+    const unassigned = tasks.filter(t => !t.assignee).length;
+    if (unassigned > 0) {
+        recommendations.push({
+            icon: '📋',
+            text: `${unassigned} tarea(s) sin asignar. Considera asignarlas a miembros del equipo`
+        });
+    }
+    
+    if (recommendations.length === 0) {
+        recommendations.push({
+            icon: '✅',
+            text: 'Todo está en orden. ¡Sigue así!'
+        });
+    }
+    
+    container.innerHTML = recommendations.map(rec => `
+        <div class="recommendation-item">
+            <span class="rec-icon">${rec.icon}</span>
+            <span>${rec.text}</span>
+        </div>
+    `).join('');
+}
+
+// Plantillas
+function initializeTemplates() {
+    loadTemplates();
+}
+
+function loadTemplates() {
+    const saved = localStorage.getItem('templates');
+    if (saved) {
+        templates = JSON.parse(saved);
+    } else {
+        templates = [
+            {
+                id: 'task',
+                name: 'Plantilla de Tarea',
+                type: 'task',
+                data: {
+                    priority: 'media',
+                    tags: ['estándar']
+                }
+            },
+            {
+                id: 'meeting',
+                name: 'Plantilla de Reunión',
+                type: 'meeting',
+                data: {
+                    duration: 60,
+                    agenda: ['Revisión de avances', 'Próximos pasos', 'Q&A']
+                }
+            },
+            {
+                id: 'project',
+                name: 'Plantilla de Proyecto',
+                type: 'project',
+                data: {
+                    phases: ['Planificación', 'Desarrollo', 'Revisión', 'Publicación']
+                }
+            },
+            {
+                id: 'review',
+                name: 'Plantilla de Revisión',
+                type: 'review',
+                data: {
+                    checklist: ['Revisar contenido', 'Verificar formato', 'Validar links']
+                }
+            }
+        ];
+        saveTemplates();
+    }
+}
+
+function saveTemplates() {
+    localStorage.setItem('templates', JSON.stringify(templates));
+}
+
+window.useTemplate = function(templateId) {
+    const template = templates.find(t => t.id === templateId);
+    if (!template) return;
+    
+    switch(template.type) {
+        case 'task':
+            document.querySelector('a[href="#tareas"]').click();
+            setTimeout(() => {
+                document.getElementById('taskTitle').value = 'Nueva tarea desde plantilla';
+                document.getElementById('taskPriority').value = template.data.priority || 'media';
+                if (template.data.tags) {
+                    document.getElementById('taskTags').value = template.data.tags.join(', ');
+                }
+            }, 300);
+            break;
+        case 'meeting':
+            createMeeting();
+            break;
+        case 'project':
+            addNotification('Plantilla Aplicada', 'Plantilla de proyecto aplicada. Crea las tareas necesarias.', 'info');
+            break;
+        case 'review':
+            addNotification('Plantilla Aplicada', 'Plantilla de revisión lista para usar.', 'info');
+            break;
+    }
+    
+    addAuditLog('Plantilla usada', template.name, 'templates');
+};
+
+// Auditoría
+function initializeAudit() {
+    loadAuditLogs();
+    renderAuditLogs();
+}
+
+function loadAuditLogs() {
+    const saved = localStorage.getItem('auditLogs');
+    if (saved) {
+        auditLogs = JSON.parse(saved);
+    }
+}
+
+function saveAuditLogs() {
+    localStorage.setItem('auditLogs', JSON.stringify(auditLogs));
+}
+
+function addAuditLog(action, details, type = 'general') {
+    const log = {
+        id: Date.now(),
+        time: new Date().toLocaleString('es-ES'),
+        user: currentUser || 'Sistema',
+        action,
+        details,
+        type
+    };
+    
+    auditLogs.unshift(log);
+    
+    // Limitar a 1000 logs
+    if (auditLogs.length > 1000) {
+        auditLogs = auditLogs.slice(0, 1000);
+    }
+    
+    saveAuditLogs();
+    renderAuditLogs();
+}
+
+function renderAuditLogs() {
+    const container = document.getElementById('auditLog');
+    if (!container) return;
+    
+    if (auditLogs.length === 0) {
+        container.innerHTML = '<p class="no-data">No hay registros de auditoría</p>';
+        return;
+    }
+    
+    container.innerHTML = auditLogs.slice(0, 50).map(log => `
+        <div class="audit-entry">
+            <span class="audit-time">${log.time}</span>
+            <span class="audit-user">${log.user}</span>
+            <span class="audit-action">${log.action}: ${log.details}</span>
+            <span class="audit-type">${log.type}</span>
+        </div>
+    `).join('');
+}
+
+window.filterAuditLogs = function() {
+    const type = document.getElementById('auditType').value;
+    const startDate = document.getElementById('auditStartDate').value;
+    const endDate = document.getElementById('auditEndDate').value;
+    
+    let filtered = auditLogs;
+    
+    if (type !== 'all') {
+        filtered = filtered.filter(log => log.type === type);
+    }
+    
+    if (startDate) {
+        filtered = filtered.filter(log => new Date(log.time) >= new Date(startDate));
+    }
+    
+    if (endDate) {
+        filtered = filtered.filter(log => new Date(log.time) <= new Date(endDate));
+    }
+    
+    const container = document.getElementById('auditLog');
+    if (container) {
+        container.innerHTML = filtered.slice(0, 50).map(log => `
+            <div class="audit-entry">
+                <span class="audit-time">${log.time}</span>
+                <span class="audit-user">${log.user}</span>
+                <span class="audit-action">${log.action}: ${log.details}</span>
+                <span class="audit-type">${log.type}</span>
+            </div>
+        `).join('');
+    }
+};
+
+window.exportAuditLogs = function() {
+    const csv = auditLogs.map(log => 
+        `${log.time},${log.user},${log.action},${log.details},${log.type}`
+    ).join('\n');
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `auditoria-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    addNotification('Auditoría Exportada', 'Los logs de auditoría se han descargado', 'success');
+};
+
+// Configuración y Backup
+window.createBackup = function() {
+    const backup = {
+        id: Date.now(),
+        date: new Date().toLocaleString('es-ES'),
+        data: {
+            tasks,
+            uploadedFiles,
+            chatMessages,
+            votes,
+            meetings,
+            documentVersions,
+            badges
+        }
+    };
+    
+    backups.push(backup);
+    localStorage.setItem('backups', JSON.stringify(backups));
+    renderBackups();
+    addNotification('Backup Creado', 'Backup creado exitosamente', 'success');
+    addAuditLog('Backup creado', `Backup ID: ${backup.id}`, 'security');
+};
+
+window.restoreBackup = function() {
+    if (backups.length === 0) {
+        alert('No hay backups disponibles');
+        return;
+    }
+    
+    const backupId = prompt(`Ingresa el ID del backup a restaurar:\n${backups.map(b => `${b.id} - ${b.date}`).join('\n')}`);
+    if (!backupId) return;
+    
+    const backup = backups.find(b => b.id == backupId);
+    if (!backup) {
+        alert('Backup no encontrado');
+        return;
+    }
+    
+    if (confirm('¿Estás seguro de restaurar este backup? Se perderán los datos actuales.')) {
+        tasks = backup.data.tasks || [];
+        uploadedFiles = backup.data.uploadedFiles || [];
+        chatMessages = backup.data.chatMessages || [];
+        votes = backup.data.votes || [];
+        meetings = backup.data.meetings || [];
+        documentVersions = backup.data.documentVersions || [];
+        badges = backup.data.badges || [];
+        
+        saveTasks();
+        saveFiles();
+        saveChatMessages();
+        saveVotes();
+        saveMeetings();
+        saveBadges();
+        
+        renderTasks();
+        renderKanban();
+        updateDashboard();
+        addNotification('Backup Restaurado', 'Los datos se han restaurado correctamente', 'success');
+        addAuditLog('Backup restaurado', `Backup ID: ${backupId}`, 'security');
+    }
+};
+
+window.downloadBackup = function() {
+    const backup = {
+        date: new Date().toISOString(),
+        data: {
+            tasks,
+            uploadedFiles,
+            chatMessages,
+            votes,
+            meetings,
+            documentVersions,
+            badges
+        }
+    };
+    
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    addNotification('Backup Descargado', 'El backup se ha descargado correctamente', 'success');
+};
+
+function renderBackups() {
+    const list = document.getElementById('backupList');
+    if (!list) return;
+    
+    const saved = localStorage.getItem('backups');
+    if (saved) {
+        backups = JSON.parse(saved);
+    }
+    
+    if (backups.length === 0) {
+        list.innerHTML = '<p class="no-data">No hay backups disponibles</p>';
+        return;
+    }
+    
+    list.innerHTML = backups.slice().reverse().map(backup => `
+        <div class="backup-item" style="padding: 1rem; background: var(--bg-color); border-radius: 5px; margin-bottom: 0.5rem;">
+            <div><strong>ID:</strong> ${backup.id}</div>
+            <div><strong>Fecha:</strong> ${backup.date}</div>
+        </div>
+    `).join('');
+}
+
+window.setTheme = function(theme) {
+    if (theme === 'dark') {
+        document.body.classList.add('dark-mode');
+    } else if (theme === 'light') {
+        document.body.classList.remove('dark-mode');
+    } else {
+        // Auto - basado en preferencias del sistema
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (prefersDark) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    }
+    localStorage.setItem('theme', theme);
+};
+
+// Mejoras en funciones existentes para incluir auditoría
+const originalTaskFormSubmit = document.getElementById('taskForm')?.onsubmit;
+if (document.getElementById('taskForm')) {
+    document.getElementById('taskForm').addEventListener('submit', function(e) {
+        setTimeout(() => {
+            const title = document.getElementById('taskTitle').value;
+            if (title) {
+                addAuditLog('Tarea creada', title, 'tasks');
+            }
+        }, 100);
+    });
 }
