@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovación Colaborativa - Universidad Tecnológica Nuevo Horizonte</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Innovación Colaborativa</h1>
+            <p class="subtitle">Universidad Tecnológica "Nuevo Horizonte"</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="#inicio" class="nav-link active">Inicio</a></li>
+                <li><a href="#equipo" class="nav-link">Equipo</a></li>
+                <li><a href="#tareas" class="nav-link">Tareas</a></li>
+                <li><a href="#archivos" class="nav-link">Archivos</a></li>
+                <li><a href="#seguridad" class="nav-link">Seguridad</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section id="inicio" class="section active">
+            <div class="container">
+                <h2>Bienvenido al Proyecto Piloto</h2>
+                <div class="intro-card">
+                    <p>El proyecto <strong>Innovación Colaborativa</strong> tiene como objetivo crear un entorno de trabajo colaborativo para docentes y estudiantes que participan en la creación de materiales educativos digitales.</p>
+                    <div class="features">
+                        <div class="feature">
+                            <span class="icon">📋</span>
+                            <h3>Gestión de Tareas</h3>
+                            <p>Organiza y asigna tareas al equipo</p>
+                        </div>
+                        <div class="feature">
+                            <span class="icon">📁</span>
+                            <h3>Compartir Archivos</h3>
+                            <p>Comparte documentos y recursos fácilmente</p>
+                        </div>
+                        <div class="feature">
+                            <span class="icon">⏱️</span>
+                            <h3>Trabajo en Tiempo Real</h3>
+                            <p>Colabora simultáneamente con tu equipo</p>
+                        </div>
+                        <div class="feature">
+                            <span class="icon">🔒</span>
+                            <h3>Seguridad</h3>
+                            <p>Resguarda la seguridad de los datos</p>
+                        </div>
+                        <div class="feature">
+                            <span class="icon">✍️</span>
+                            <h3>Registro de Autoría</h3>
+                            <p>Registra la autoría del material producido</p>
+                        </div>
+                        <div class="feature">
+                            <span class="icon">🌐</span>
+                            <h3>Modalidad Remota</h3>
+                            <p>100% trabajo remoto</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="equipo" class="section">
+            <div class="container">
+                <h2>Nuestro Equipo</h2>
+                <p class="section-description">Equipo multidisciplinario de 6 profesionales trabajando en modalidad remota</p>
+                <div class="team-grid">
+                    <div class="team-member">
+                        <div class="member-avatar">👔</div>
+                        <h3>Coordinador</h3>
+                        <p>Gestión general del proyecto y coordinación del equipo</p>
+                        <span class="member-status">En línea</span>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-avatar">🎨</div>
+                        <h3>Diseñador Instruccional</h3>
+                        <p>Diseño de estrategias y metodologías educativas</p>
+                        <span class="member-status">En línea</span>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-avatar">📝</div>
+                        <h3>Editor de Contenido</h3>
+                        <p>Edición y revisión de contenido educativo</p>
+                        <span class="member-status">En línea</span>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-avatar">💻</div>
+                        <h3>Programador Web</h3>
+                        <p>Desarrollo de plataformas y herramientas digitales</p>
+                        <span class="member-status">En línea</span>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-avatar">🎬</div>
+                        <h3>Especialista Multimedia</h3>
+                        <p>Creación de recursos audiovisuales y multimedia</p>
+                        <span class="member-status">En línea</span>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-avatar">✅</div>
+                        <h3>Revisor</h3>
+                        <p>Revisión de calidad y validación de materiales</p>
+                        <span class="member-status">En línea</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tareas" class="section">
+            <div class="container">
+                <h2>Gestión de Tareas</h2>
+                <div class="task-manager">
+                    <div class="task-form">
+                        <h3>Nueva Tarea</h3>
+                        <form id="taskForm">
+                            <input type="text" id="taskTitle" placeholder="Título de la tarea" required>
+                            <textarea id="taskDescription" placeholder="Descripción de la tarea" rows="3"></textarea>
+                            <select id="taskAssignee" required>
+                                <option value="">Asignar a...</option>
+                                <option value="coordinador">Coordinador</option>
+                                <option value="diseñador">Diseñador Instruccional</option>
+                                <option value="editor">Editor de Contenido</option>
+                                <option value="programador">Programador Web</option>
+                                <option value="multimedia">Especialista Multimedia</option>
+                                <option value="revisor">Revisor</option>
+                            </select>
+                            <select id="taskPriority">
+                                <option value="baja">Prioridad Baja</option>
+                                <option value="media" selected>Prioridad Media</option>
+                                <option value="alta">Prioridad Alta</option>
+                            </select>
+                            <button type="submit">Agregar Tarea</button>
+                        </form>
+                    </div>
+                    <div class="task-list">
+                        <h3>Tareas del Proyecto</h3>
+                        <div id="tasksContainer">
+                            <p class="no-tasks">No hay tareas asignadas aún. Agrega una nueva tarea para comenzar.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="archivos" class="section">
+            <div class="container">
+                <h2>Compartir Archivos</h2>
+                <div class="file-manager">
+                    <div class="file-upload">
+                        <h3>Subir Archivo</h3>
+                        <div class="upload-area" id="uploadArea">
+                            <span class="upload-icon">📤</span>
+                            <p>Arrastra archivos aquí o haz clic para seleccionar</p>
+                            <input type="file" id="fileInput" multiple style="display: none;">
+                        </div>
+                        <div id="fileList" class="file-list"></div>
+                    </div>
+                    <div class="shared-files">
+                        <h3>Archivos Compartidos</h3>
+                        <div id="sharedFilesContainer">
+                            <div class="file-item">
+                                <span class="file-icon">📄</span>
+                                <div class="file-info">
+                                    <span class="file-name">Guía de Estilo del Proyecto.pdf</span>
+                                    <span class="file-meta">Subido por: Coordinador | Fecha: 15/01/2024</span>
+                                </div>
+                                <button class="download-btn">Descargar</button>
+                            </div>
+                            <div class="file-item">
+                                <span class="file-icon">📊</span>
+                                <div class="file-info">
+                                    <span class="file-name">Plan de Trabajo.xlsx</span>
+                                    <span class="file-meta">Subido por: Diseñador Instruccional | Fecha: 14/01/2024</span>
+                                </div>
+                                <button class="download-btn">Descargar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="seguridad" class="section">
+            <div class="container">
+                <h2>Seguridad y Autoría</h2>
+                <div class="security-content">
+                    <div class="security-card">
+                        <h3>🔒 Medidas de Seguridad</h3>
+                        <ul>
+                            <li>Acceso autenticado para todos los miembros del equipo</li>
+                            <li>Encriptación de datos en tránsito y en reposo</li>
+                            <li>Registro de actividades y cambios realizados</li>
+                            <li>Backups automáticos diarios</li>
+                            <li>Control de acceso basado en roles</li>
+                        </ul>
+                    </div>
+                    <div class="security-card">
+                        <h3>✍️ Registro de Autoría</h3>
+                        <p>Todos los materiales producidos incluyen registro de autoría con:</p>
+                        <ul>
+                            <li>Nombre del autor o autores</li>
+                            <li>Fecha de creación y última modificación</li>
+                            <li>Historial de versiones</li>
+                            <li>Contribuciones de cada miembro del equipo</li>
+                            <li>Licencia y derechos de uso</li>
+                        </ul>
+                    </div>
+                    <div class="security-card">
+                        <h3>📊 Actividad Reciente</h3>
+                        <div id="activityLog">
+                            <div class="activity-item">
+                                <span class="activity-time">Hace 2 horas</span>
+                                <span class="activity-text">Editor de Contenido actualizó "Módulo 3 - Introducción"</span>
+                            </div>
+                            <div class="activity-item">
+                                <span class="activity-time">Hace 5 horas</span>
+                                <span class="activity-text">Especialista Multimedia subió "Video Tutorial.mp4"</span>
+                            </div>
+                            <div class="activity-item">
+                                <span class="activity-time">Ayer</span>
+                                <span class="activity-text">Programador Web completó "Sistema de autenticación"</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Universidad Tecnológica "Nuevo Horizonte" - Proyecto Innovación Colaborativa</p>
+            <p class="footer-note">Trabajo remoto 100% | Todos los derechos reservados</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
