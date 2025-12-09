@@ -7,6 +7,54 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Modal de Login -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Iniciar Sesión</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Usuario</label>
+                    <input type="text" id="username" placeholder="Ingresa tu usuario" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="password" placeholder="Ingresa tu contraseña" required>
+                </div>
+                <div class="form-group">
+                    <label>Rol</label>
+                    <select id="userRole" required>
+                        <option value="">Selecciona tu rol</option>
+                        <option value="coordinador">Coordinador</option>
+                        <option value="diseñador">Diseñador Instruccional</option>
+                        <option value="editor">Editor de Contenido</option>
+                        <option value="programador">Programador Web</option>
+                        <option value="multimedia">Especialista Multimedia</option>
+                        <option value="revisor">Revisor</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Ingresar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Barra de usuario -->
+    <div class="user-bar" id="userBar" style="display: none;">
+        <div class="container">
+            <div class="user-info">
+                <span id="currentUser">Usuario</span>
+                <span class="user-role" id="currentRole">Rol</span>
+            </div>
+            <div class="user-actions">
+                <button class="notifications-btn" id="notificationsBtn">
+                    🔔 <span class="notification-badge" id="notificationBadge">0</span>
+                </button>
+                <button class="theme-toggle" id="themeToggle">🌙</button>
+                <button class="logout-btn" id="logoutBtn">Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+
     <header>
         <div class="container">
             <h1>Innovación Colaborativa</h1>
@@ -18,9 +66,12 @@
         <div class="container">
             <ul>
                 <li><a href="#inicio" class="nav-link active">Inicio</a></li>
+                <li><a href="#dashboard" class="nav-link">Dashboard</a></li>
                 <li><a href="#equipo" class="nav-link">Equipo</a></li>
                 <li><a href="#tareas" class="nav-link">Tareas</a></li>
                 <li><a href="#archivos" class="nav-link">Archivos</a></li>
+                <li><a href="#chat" class="nav-link">Chat</a></li>
+                <li><a href="#calendario" class="nav-link">Calendario</a></li>
                 <li><a href="#seguridad" class="nav-link">Seguridad</a></li>
             </ul>
         </div>
@@ -64,6 +115,61 @@
                             <p>100% trabajo remoto</p>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard -->
+        <section id="dashboard" class="section">
+            <div class="container">
+                <h2>Dashboard del Proyecto</h2>
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-info">
+                            <h3 id="totalTasks">0</h3>
+                            <p>Total de Tareas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-info">
+                            <h3 id="completedTasks">0</h3>
+                            <p>Tareas Completadas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-info">
+                            <h3 id="pendingTasks">0</h3>
+                            <p>Tareas Pendientes</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📁</div>
+                        <div class="stat-info">
+                            <h3 id="totalFiles">0</h3>
+                            <p>Archivos Compartidos</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-charts">
+                    <div class="chart-card">
+                        <h3>Tareas por Prioridad</h3>
+                        <div class="chart-container">
+                            <canvas id="priorityChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Tareas por Miembro</h3>
+                        <div class="chart-container">
+                            <canvas id="memberChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="recent-activity-dashboard">
+                    <h3>Actividad Reciente</h3>
+                    <div id="dashboardActivity"></div>
                 </div>
             </div>
         </section>
@@ -136,11 +242,41 @@
                                 <option value="media" selected>Prioridad Media</option>
                                 <option value="alta">Prioridad Alta</option>
                             </select>
+                            <input type="date" id="taskDueDate" placeholder="Fecha de vencimiento">
+                            <div class="tags-input">
+                                <label>Etiquetas (separadas por comas)</label>
+                                <input type="text" id="taskTags" placeholder="diseño, urgente, revisión">
+                            </div>
                             <button type="submit">Agregar Tarea</button>
                         </form>
                     </div>
                     <div class="task-list">
-                        <h3>Tareas del Proyecto</h3>
+                        <div class="task-controls">
+                            <h3>Tareas del Proyecto</h3>
+                            <div class="task-filters">
+                                <input type="text" id="taskSearch" placeholder="🔍 Buscar tareas...">
+                                <select id="filterPriority">
+                                    <option value="">Todas las prioridades</option>
+                                    <option value="alta">Alta</option>
+                                    <option value="media">Media</option>
+                                    <option value="baja">Baja</option>
+                                </select>
+                                <select id="filterAssignee">
+                                    <option value="">Todos los miembros</option>
+                                    <option value="coordinador">Coordinador</option>
+                                    <option value="diseñador">Diseñador Instruccional</option>
+                                    <option value="editor">Editor de Contenido</option>
+                                    <option value="programador">Programador Web</option>
+                                    <option value="multimedia">Especialista Multimedia</option>
+                                    <option value="revisor">Revisor</option>
+                                </select>
+                                <select id="filterStatus">
+                                    <option value="">Todas</option>
+                                    <option value="pending">Pendientes</option>
+                                    <option value="completed">Completadas</option>
+                                </select>
+                            </div>
+                        </div>
                         <div id="tasksContainer">
                             <p class="no-tasks">No hay tareas asignadas aún. Agrega una nueva tarea para comenzar.</p>
                         </div>
@@ -148,6 +284,23 @@
                 </div>
             </div>
         </section>
+
+        <!-- Modal de Detalles de Tarea -->
+        <div id="taskModal" class="modal">
+            <div class="modal-content modal-large">
+                <span class="close-modal">&times;</span>
+                <h2 id="modalTaskTitle">Detalles de Tarea</h2>
+                <div id="modalTaskContent"></div>
+                <div class="task-comments-section">
+                    <h3>Comentarios</h3>
+                    <div id="taskComments"></div>
+                    <form id="commentForm">
+                        <textarea id="commentText" placeholder="Escribe un comentario..." rows="3"></textarea>
+                        <button type="submit">Agregar Comentario</button>
+                    </form>
+                </div>
+            </div>
+        </div>
 
         <section id="archivos" class="section">
             <div class="container">
@@ -182,6 +335,47 @@
                                 <button class="download-btn">Descargar</button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chat -->
+        <section id="chat" class="section">
+            <div class="container">
+                <h2>Chat en Tiempo Real</h2>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message">
+                            <span class="message-author">Sistema</span>
+                            <span class="message-time">Ahora</span>
+                            <p class="message-text">Bienvenido al chat colaborativo. Los mensajes se guardan localmente.</p>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <form id="chatForm">
+                            <input type="text" id="chatInput" placeholder="Escribe un mensaje..." autocomplete="off">
+                            <button type="submit">Enviar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Calendario -->
+        <section id="calendario" class="section">
+            <div class="container">
+                <h2>Calendario de Actividades</h2>
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button id="prevMonth">‹</button>
+                        <h3 id="currentMonth"></h3>
+                        <button id="nextMonth">›</button>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid"></div>
+                    <div class="calendar-events" id="calendarEvents">
+                        <h3>Eventos del Mes</h3>
+                        <div id="eventsList"></div>
                     </div>
                 </div>
             </div>
@@ -240,6 +434,15 @@
             <p class="footer-note">Trabajo remoto 100% | Todos los derechos reservados</p>
         </div>
     </footer>
+
+    <!-- Panel de Notificaciones -->
+    <div id="notificationsPanel" class="notifications-panel">
+        <div class="notifications-header">
+            <h3>Notificaciones</h3>
+            <button id="clearNotifications">Limpiar</button>
+        </div>
+        <div id="notificationsList" class="notifications-list"></div>
+    </div>
 
     <script src="script.js"></script>
 </body>
