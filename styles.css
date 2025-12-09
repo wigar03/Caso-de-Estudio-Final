@@ -1201,6 +1201,619 @@ body.dark-mode .calendar-day.today {
     background-color: var(--secondary-color);
 }
 
+/* Búsqueda Global */
+.global-search-container {
+    position: relative;
+}
+
+.global-search {
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 20px;
+    width: 250px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.global-search:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    width: 300px;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    margin-top: 0.5rem;
+    max-height: 400px;
+    overflow-y: auto;
+    box-shadow: var(--shadow-hover);
+    display: none;
+    z-index: 1000;
+}
+
+.search-results.show {
+    display: block;
+}
+
+.search-result-item {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-result-item:hover {
+    background-color: var(--bg-color);
+}
+
+.search-result-type {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+
+.search-result-title {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.search-result-preview {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-top: 0.25rem;
+}
+
+/* Badges */
+.badges-btn {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    position: relative;
+}
+
+.badges-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.badge-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--warning-color);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.badges-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem 0;
+}
+
+.badge-item {
+    text-align: center;
+    padding: 1.5rem;
+    background-color: var(--bg-color);
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.badge-item.earned {
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+    color: white;
+}
+
+.badge-item:hover {
+    transform: translateY(-5px);
+}
+
+.badge-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.badge-name {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.badge-description {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+/* Dashboard Mejorado */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.dashboard-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.export-btn, .refresh-btn, .save-btn, .version-btn {
+    padding: 0.5rem 1rem;
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.export-btn:hover, .refresh-btn:hover, .save-btn:hover, .version-btn:hover {
+    background-color: #2980b9;
+}
+
+.stat-change {
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    display: block;
+}
+
+.stat-change.positive {
+    color: var(--success-color);
+}
+
+.stat-change.negative {
+    color: var(--accent-color);
+}
+
+/* Kanban Board */
+.kanban-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.kanban-board {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+    min-height: 600px;
+}
+
+.kanban-column {
+    background-color: var(--bg-color);
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.kanban-column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.kanban-column-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--primary-color);
+}
+
+.kanban-count {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.kanban-items {
+    flex: 1;
+    min-height: 100px;
+    padding: 0.5rem 0;
+}
+
+.kanban-item {
+    background-color: var(--card-bg);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    border-radius: 5px;
+    box-shadow: var(--shadow);
+    cursor: move;
+    transition: transform 0.3s ease;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.kanban-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.kanban-item.priority-alta {
+    border-left-color: var(--accent-color);
+}
+
+.kanban-item.priority-media {
+    border-left-color: var(--warning-color);
+}
+
+.kanban-item.priority-baja {
+    border-left-color: var(--success-color);
+}
+
+.kanban-item-title {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.kanban-item-meta {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+
+.kanban-item-assignee {
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+
+/* Editor Colaborativo */
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.editor-toolbar {
+    background-color: var(--card-bg);
+    padding: 0.75rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    box-shadow: var(--shadow);
+}
+
+.editor-toolbar button {
+    padding: 0.5rem 1rem;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.editor-toolbar button:hover {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.toolbar-separator {
+    width: 1px;
+    background-color: var(--border-color);
+    margin: 0 0.5rem;
+}
+
+.editor-container {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 1.5rem;
+}
+
+.editor-content {
+    background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: 5px;
+    min-height: 500px;
+    box-shadow: var(--shadow);
+    outline: none;
+}
+
+.editor-content:focus {
+    border: 2px solid var(--secondary-color);
+}
+
+.editor-sidebar {
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 5px;
+    box-shadow: var(--shadow);
+    height: fit-content;
+}
+
+.editor-sidebar h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.collaborator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--bg-color);
+    border-radius: 5px;
+}
+
+.collaborator-name {
+    font-size: 0.9rem;
+}
+
+.collaborator-status {
+    font-size: 0.75rem;
+}
+
+.collaborator-status.online {
+    color: var(--success-color);
+}
+
+.collaborator-status.offline {
+    color: var(--text-light);
+}
+
+.change-history-item {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--bg-color);
+    border-radius: 5px;
+    font-size: 0.85rem;
+}
+
+.change-history-time {
+    color: var(--text-light);
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+/* Timeline */
+.timeline-container {
+    background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.timeline-filter {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    background-color: var(--bg-color);
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+    background-color: var(--secondary-color);
+    color: white;
+    border-color: var(--secondary-color);
+}
+
+.timeline-line {
+    position: relative;
+    padding-left: 3rem;
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 2rem;
+    padding-left: 2rem;
+    border-left: 2px solid var(--border-color);
+}
+
+.timeline-item:last-child {
+    border-left: none;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--secondary-color);
+    border: 2px solid var(--card-bg);
+}
+
+.timeline-item.completed::before {
+    background-color: var(--success-color);
+}
+
+.timeline-item.important::before {
+    background-color: var(--accent-color);
+}
+
+.timeline-date {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+
+.timeline-content {
+    background-color: var(--bg-color);
+    padding: 1rem;
+    border-radius: 5px;
+}
+
+.timeline-title {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.25rem;
+}
+
+.timeline-description {
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+/* Reportes */
+.reports-container {
+    background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.report-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.report-filters select,
+.report-filters input {
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+}
+
+.report-content {
+    min-height: 400px;
+    padding: 2rem;
+    background-color: var(--bg-color);
+    border-radius: 5px;
+}
+
+.report-section {
+    margin-bottom: 2rem;
+}
+
+.report-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.report-table th,
+.report-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.report-table th {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.report-table tr:hover {
+    background-color: var(--bg-color);
+}
+
+.no-data {
+    text-align: center;
+    color: var(--text-light);
+    padding: 3rem;
+    font-style: italic;
+}
+
+/* Versiones */
+.versions-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.version-item {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: var(--bg-color);
+    border-radius: 5px;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.version-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.version-number {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.version-date {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.version-author {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.version-changes {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.version-actions {
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.version-btn {
+    padding: 0.25rem 0.75rem;
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .task-manager,
@@ -1268,6 +1881,49 @@ body.dark-mode .calendar-day.today {
     .user-actions {
         width: 100%;
         justify-content: space-around;
+        flex-wrap: wrap;
+    }
+
+    .global-search {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .kanban-board {
+        grid-template-columns: 1fr;
+        overflow-x: auto;
+    }
+
+    .kanban-column {
+        min-width: 250px;
+    }
+
+    .editor-container {
+        grid-template-columns: 1fr;
+    }
+
+    .editor-sidebar {
+        order: -1;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .dashboard-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .report-filters {
+        flex-direction: column;
+    }
+
+    .report-filters select,
+    .report-filters input {
+        width: 100%;
     }
 }
 

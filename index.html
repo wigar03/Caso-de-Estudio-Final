@@ -46,8 +46,15 @@
                 <span class="user-role" id="currentRole">Rol</span>
             </div>
             <div class="user-actions">
+                <div class="global-search-container">
+                    <input type="text" id="globalSearch" placeholder="🔍 Búsqueda global..." class="global-search">
+                    <div id="searchResults" class="search-results"></div>
+                </div>
                 <button class="notifications-btn" id="notificationsBtn">
                     🔔 <span class="notification-badge" id="notificationBadge">0</span>
+                </button>
+                <button class="badges-btn" id="badgesBtn" title="Logros y Badges">
+                    🏆 <span class="badge-count" id="badgeCount">0</span>
                 </button>
                 <button class="theme-toggle" id="themeToggle">🌙</button>
                 <button class="logout-btn" id="logoutBtn">Cerrar Sesión</button>
@@ -67,11 +74,15 @@
             <ul>
                 <li><a href="#inicio" class="nav-link active">Inicio</a></li>
                 <li><a href="#dashboard" class="nav-link">Dashboard</a></li>
+                <li><a href="#kanban" class="nav-link">Kanban</a></li>
                 <li><a href="#equipo" class="nav-link">Equipo</a></li>
                 <li><a href="#tareas" class="nav-link">Tareas</a></li>
+                <li><a href="#editor" class="nav-link">Editor</a></li>
                 <li><a href="#archivos" class="nav-link">Archivos</a></li>
                 <li><a href="#chat" class="nav-link">Chat</a></li>
+                <li><a href="#timeline" class="nav-link">Timeline</a></li>
                 <li><a href="#calendario" class="nav-link">Calendario</a></li>
+                <li><a href="#reportes" class="nav-link">Reportes</a></li>
                 <li><a href="#seguridad" class="nav-link">Seguridad</a></li>
             </ul>
         </div>
@@ -119,16 +130,23 @@
             </div>
         </section>
 
-        <!-- Dashboard -->
+        <!-- Dashboard Mejorado -->
         <section id="dashboard" class="section">
             <div class="container">
-                <h2>Dashboard del Proyecto</h2>
+                <div class="dashboard-header">
+                    <h2>Dashboard del Proyecto</h2>
+                    <div class="dashboard-actions">
+                        <button class="export-btn" onclick="exportDashboard()">📊 Exportar Reporte</button>
+                        <button class="refresh-btn" onclick="refreshDashboard()">🔄 Actualizar</button>
+                    </div>
+                </div>
                 <div class="dashboard-grid">
                     <div class="stat-card">
                         <div class="stat-icon">📋</div>
                         <div class="stat-info">
                             <h3 id="totalTasks">0</h3>
                             <p>Total de Tareas</p>
+                            <span class="stat-change positive" id="tasksChange">+0%</span>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -136,6 +154,7 @@
                         <div class="stat-info">
                             <h3 id="completedTasks">0</h3>
                             <p>Tareas Completadas</p>
+                            <span class="stat-change positive" id="completedChange">+0%</span>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -143,6 +162,7 @@
                         <div class="stat-info">
                             <h3 id="pendingTasks">0</h3>
                             <p>Tareas Pendientes</p>
+                            <span class="stat-change" id="pendingChange">0%</span>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -150,6 +170,23 @@
                         <div class="stat-info">
                             <h3 id="totalFiles">0</h3>
                             <p>Archivos Compartidos</p>
+                            <span class="stat-change positive" id="filesChange">+0%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <h3>6</h3>
+                            <p>Miembros Activos</p>
+                            <span class="stat-change positive">100%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-info">
+                            <h3 id="avgCompletion">0%</h3>
+                            <p>Tasa de Completación</p>
+                            <span class="stat-change positive" id="completionChange">+0%</span>
                         </div>
                     </div>
                 </div>
@@ -166,6 +203,12 @@
                             <canvas id="memberChart"></canvas>
                         </div>
                     </div>
+                    <div class="chart-card">
+                        <h3>Progreso Semanal</h3>
+                        <div class="chart-container">
+                            <canvas id="weeklyChart"></canvas>
+                        </div>
+                    </div>
                 </div>
                 <div class="recent-activity-dashboard">
                     <h3>Actividad Reciente</h3>
@@ -173,6 +216,54 @@
                 </div>
             </div>
         </section>
+
+        <!-- Tablero Kanban -->
+        <section id="kanban" class="section">
+            <div class="container">
+                <div class="kanban-header">
+                    <h2>Tablero Kanban</h2>
+                    <button class="btn-primary" onclick="addKanbanTask()">+ Nueva Tarea</button>
+                </div>
+                <div class="kanban-board" id="kanbanBoard">
+                    <div class="kanban-column" data-status="backlog">
+                        <div class="kanban-column-header">
+                            <h3>📥 Pendientes</h3>
+                            <span class="kanban-count" id="backlogCount">0</span>
+                        </div>
+                        <div class="kanban-items" id="backlogItems" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    </div>
+                    <div class="kanban-column" data-status="todo">
+                        <div class="kanban-column-header">
+                            <h3>📋 Por Hacer</h3>
+                            <span class="kanban-count" id="todoCount">0</span>
+                        </div>
+                        <div class="kanban-items" id="todoItems" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    </div>
+                    <div class="kanban-column" data-status="inprogress">
+                        <div class="kanban-column-header">
+                            <h3>⚙️ En Progreso</h3>
+                            <span class="kanban-count" id="inprogressCount">0</span>
+                        </div>
+                        <div class="kanban-items" id="inprogressItems" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    </div>
+                    <div class="kanban-column" data-status="review">
+                        <div class="kanban-column-header">
+                            <h3>👀 En Revisión</h3>
+                            <span class="kanban-count" id="reviewCount">0</span>
+                        </div>
+                        <div class="kanban-items" id="reviewItems" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    </div>
+                    <div class="kanban-column" data-status="done">
+                        <div class="kanban-column-header">
+                            <h3>✅ Completadas</h3>
+                            <span class="kanban-count" id="doneCount">0</span>
+                        </div>
+                        <div class="kanban-items" id="doneItems" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
 
         <section id="equipo" class="section">
             <div class="container">
@@ -214,6 +305,90 @@
                         <h3>Revisor</h3>
                         <p>Revisión de calidad y validación de materiales</p>
                         <span class="member-status">En línea</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Editor Colaborativo -->
+        <section id="editor" class="section">
+            <div class="container">
+                <div class="editor-header">
+                    <h2>Editor Colaborativo</h2>
+                    <div class="editor-actions">
+                        <button class="save-btn" onclick="saveDocument()">💾 Guardar</button>
+                        <button class="version-btn" onclick="showVersions()">📚 Versiones</button>
+                        <button class="export-btn" onclick="exportDocument()">📄 Exportar</button>
+                    </div>
+                </div>
+                <div class="editor-toolbar">
+                    <button onclick="formatText('bold')" title="Negrita"><strong>B</strong></button>
+                    <button onclick="formatText('italic')" title="Cursiva"><em>I</em></button>
+                    <button onclick="formatText('underline')" title="Subrayado"><u>U</u></button>
+                    <div class="toolbar-separator"></div>
+                    <button onclick="formatText('heading')" title="Título">H</button>
+                    <button onclick="formatText('list')" title="Lista">• Lista</button>
+                    <button onclick="formatText('link')" title="Enlace">🔗</button>
+                    <div class="toolbar-separator"></div>
+                    <button onclick="insertImage()" title="Imagen">🖼️</button>
+                    <button onclick="insertTable()" title="Tabla">⊞</button>
+                </div>
+                <div class="editor-container">
+                    <div class="editor-content" contenteditable="true" id="editorContent" oninput="autoSave()">
+                        <h1>Documento Colaborativo</h1>
+                        <p>Escribe aquí tu contenido. Los cambios se guardan automáticamente.</p>
+                        <p>Puedes colaborar con tu equipo en tiempo real.</p>
+                    </div>
+                    <div class="editor-sidebar">
+                        <h3>Colaboradores</h3>
+                        <div id="collaboratorsList">
+                            <div class="collaborator">
+                                <span class="collaborator-name">${currentUser || 'Tú'}</span>
+                                <span class="collaborator-status online">●</span>
+                            </div>
+                        </div>
+                        <h3>Historial de Cambios</h3>
+                        <div id="changeHistory"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline del Proyecto -->
+        <section id="timeline" class="section">
+            <div class="container">
+                <h2>Timeline del Proyecto</h2>
+                <div class="timeline-container">
+                    <div class="timeline-filter">
+                        <button class="filter-btn active" data-filter="all">Todos</button>
+                        <button class="filter-btn" data-filter="tasks">Tareas</button>
+                        <button class="filter-btn" data-filter="files">Archivos</button>
+                        <button class="filter-btn" data-filter="comments">Comentarios</button>
+                    </div>
+                    <div class="timeline-line" id="timelineLine"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reportes -->
+        <section id="reportes" class="section">
+            <div class="container">
+                <h2>Reportes y Métricas</h2>
+                <div class="reports-container">
+                    <div class="report-filters">
+                        <select id="reportType">
+                            <option value="general">Reporte General</option>
+                            <option value="tareas">Reporte de Tareas</option>
+                            <option value="equipo">Reporte de Equipo</option>
+                            <option value="productividad">Productividad</option>
+                        </select>
+                        <input type="date" id="reportStartDate">
+                        <input type="date" id="reportEndDate">
+                        <button class="btn-primary" onclick="generateReport()">Generar Reporte</button>
+                        <button class="export-btn" onclick="exportReport()">📊 Exportar PDF</button>
+                    </div>
+                    <div class="report-content" id="reportContent">
+                        <p class="no-data">Selecciona un tipo de reporte y genera para ver los resultados.</p>
                     </div>
                 </div>
             </div>
@@ -442,6 +617,51 @@
             <button id="clearNotifications">Limpiar</button>
         </div>
         <div id="notificationsList" class="notifications-list"></div>
+    </div>
+
+    <!-- Panel de Badges -->
+    <div id="badgesPanel" class="modal">
+        <div class="modal-content modal-large">
+            <span class="close-modal">&times;</span>
+            <h2>🏆 Logros y Badges</h2>
+            <div class="badges-container" id="badgesContainer"></div>
+        </div>
+    </div>
+
+    <!-- Modal de Versiones -->
+    <div id="versionsModal" class="modal">
+        <div class="modal-content modal-large">
+            <span class="close-modal">&times;</span>
+            <h2>📚 Historial de Versiones</h2>
+            <div id="versionsList"></div>
+        </div>
+    </div>
+
+    <!-- Modal Nueva Tarea Kanban -->
+    <div id="kanbanTaskModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Nueva Tarea Kanban</h2>
+            <form id="kanbanTaskForm">
+                <input type="text" id="kanbanTaskTitle" placeholder="Título" required>
+                <textarea id="kanbanTaskDesc" placeholder="Descripción" rows="3"></textarea>
+                <select id="kanbanTaskAssignee" required>
+                    <option value="">Asignar a...</option>
+                    <option value="coordinador">Coordinador</option>
+                    <option value="diseñador">Diseñador Instruccional</option>
+                    <option value="editor">Editor de Contenido</option>
+                    <option value="programador">Programador Web</option>
+                    <option value="multimedia">Especialista Multimedia</option>
+                    <option value="revisor">Revisor</option>
+                </select>
+                <select id="kanbanTaskStatus">
+                    <option value="backlog">Pendientes</option>
+                    <option value="todo">Por Hacer</option>
+                    <option value="inprogress">En Progreso</option>
+                </select>
+                <button type="submit" class="btn-primary">Crear Tarea</button>
+            </form>
+        </div>
     </div>
 
     <script src="script.js"></script>
